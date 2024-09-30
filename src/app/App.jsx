@@ -1,5 +1,7 @@
 import TransactionHistory from "../features/transactions/TransactionHistory";
 import Transactions from "../features/transactions/Transactions";
+import store from "./store";
+import { Provider } from "react-redux";
 
 import "./app.css";
 
@@ -8,8 +10,10 @@ export default function App() {
   return (
     <main>
       <h1>Bank Account</h1>
-      <Transactions />
-      <TransactionHistory />
+      <Provider store={store}>
+        <Transactions />
+        <TransactionHistory />
+      </Provider>
     </main>
   );
 }

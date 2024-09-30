@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 /**
  * Each transaction is recorded as an object with the following properties.
@@ -9,7 +9,8 @@ import { createSlice, current } from "@reduxjs/toolkit";
  */
 
 // TODO: Set initial state to have a balance of 0 and an empty array of transactions.
-/**@type {{balance: number, history: Transaction[]}} */
+
+/** @type {{balance: number, history: Transaction[]}} */
 const initialState = {
   balance: 0,
   history: [],
@@ -48,7 +49,7 @@ const transactionsSlice = createSlice({
     transfer: (state, { payload }) => {
       state.balance -= payload.amount;
       state.history.push({
-        type: "transfer",
+        type: `transfer/${payload.recipient}`,
         amount: payload.amount,
         balance: state.balance,
       });
