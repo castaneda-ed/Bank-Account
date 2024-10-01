@@ -31,12 +31,16 @@ const transactionsSlice = createSlice({
   initialState,
   reducers: {
     withdrawal: (state, { payload }) => {
-      state.balance -= payload.amount;
-      state.history.push({
-        type: "withdrawal",
-        amount: payload.amount,
-        balance: state.balance,
-      });
+      if (state.balance >= payload.amount) {
+        state.balance -= payload.amount;
+        state.history.push({
+          type: "withdrawal",
+          amount: payload.amount,
+          balance: state.balance,
+        });
+      } else {
+        alert("You don't have enough funds");
+      }
     },
     deposit: (state, { payload }) => {
       state.balance += payload.amount;
@@ -47,17 +51,34 @@ const transactionsSlice = createSlice({
       });
     },
     transfer: (state, { payload }) => {
-      state.balance -= payload.amount;
-      state.history.push({
-        type: `transfer/${payload.recipient}`,
-        amount: payload.amount,
-        balance: state.balance,
-      });
+      if (state.balance >= payload.amount) {
+        state.balance -= payload.amount;
+        state.history.push({
+          type: `transfer/${payload.recipient}`,
+          amount: payload.amount,
+          balance: state.balance,
+        });
+      } else {
+        alert("You don't have enough funds");
+      }
+    },
+    undo: (state) => {
+      const lastTransaction = state.history.pop();
+      if (lastTransaction) {
+        if (lastTransaction.type === "withdrawal") {
+          state.balance += lastTransaction.amount;
+        } else if (lastTransaction.type === deposit) {
+          state.balance - +lastTransaction.amount;
+        } else if (lastTransaction.type.startsWith("transfer") === "transfer") {
+          state.balance += lastTransaction.amount;
+        }
+      }
     },
   },
 });
 
-export const { deposit, withdrawal, transfer } = transactionsSlice.actions;
+export const { deposit, withdrawal, transfer, undo } =
+  transactionsSlice.actions;
 
 export const selectBalance = (state) => state.transactions.balance;
 export const selectHistory = (state) => state.transactions.history;

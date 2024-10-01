@@ -1,13 +1,14 @@
 import { useState } from "react";
 
-import transactionsSlice, {
+import {
   deposit,
   selectBalance,
   transfer,
   withdrawal,
+  undo,
 } from "./transactionsSlice";
 import "./transactions.scss";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 /**
  * Allows users to deposit to, withdraw from, and transfer money from their account.
@@ -18,6 +19,8 @@ export default function Transactions() {
 
   const [amountStr, setAmountStr] = useState("0.00");
   const [recipient, setRecipient] = useState("");
+
+  const dispatch = useDispatch();
 
   /** Dispatches a transaction action based on the form submission. */
   const onTransaction = (e) => {
@@ -41,6 +44,10 @@ export default function Transactions() {
     }
   };
 
+  const onUndo = () => {
+    dispatch(undo());
+  };
+
   return (
     <section className="transactions container">
       <h2>Transactions</h2>
@@ -56,7 +63,7 @@ export default function Transactions() {
               type="number"
               inputMode="decimal"
               min={0}
-              step="0.01"
+              step="1"
               value={amountStr}
               onChange={(e) => setAmountStr(e.target.value)}
             />
@@ -80,6 +87,7 @@ export default function Transactions() {
           </label>
           <button name="transfer">Transfer</button>
         </div>
+        <button onClick={onUndo}>Undo Last Transaction</button>
       </form>
     </section>
   );
