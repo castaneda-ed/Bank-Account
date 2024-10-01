@@ -43,12 +43,14 @@ const transactionsSlice = createSlice({
       }
     },
     deposit: (state, { payload }) => {
-      state.balance += payload.amount;
-      state.history.push({
-        type: "deposit",
-        amount: payload.amount,
-        balance: state.balance,
-      });
+      if (payload.amount > 0) {
+        state.balance += payload.amount;
+        state.history.push({
+          type: "deposit",
+          amount: payload.amount,
+          balance: state.balance,
+        });
+      }
     },
     transfer: (state, { payload }) => {
       if (state.balance >= payload.amount) {
@@ -62,15 +64,34 @@ const transactionsSlice = createSlice({
         alert("You don't have enough funds");
       }
     },
+    //     undo: (state) => {
+    //       const lastTransaction = state.history.pop();
+    //       if (lastTransaction) {
+    //         if (lastTransaction.type === "withdrawal") {
+    //           state.balance += lastTransaction.amount;
+    //         } else if (lastTransaction.type === "deposit") {
+    //           state.balance -= lastTransaction.amount;
+    //         } else if (lastTransaction.type === "transfer") {
+    //           state.balance += lastTransaction.amount;
+    //         }
+    //       }
+    //     },
+    //   },
+    // });
+
+    //I commented mine cause transfer wasnt working and got this solution from chatgpt, really useful
+
     undo: (state) => {
-      const lastTransaction = state.history.pop();
+      const lastTransaction = state.history.pop(); // Remove the last transaction from the history
+
       if (lastTransaction) {
+        // Reverse the last transaction
         if (lastTransaction.type === "withdrawal") {
-          state.balance += lastTransaction.amount;
-        } else if (lastTransaction.type === deposit) {
-          state.balance - +lastTransaction.amount;
-        } else if (lastTransaction.type.startsWith("transfer") === "transfer") {
-          state.balance += lastTransaction.amount;
+          state.balance += lastTransaction.amount; // Add the amount back to the balance
+        } else if (lastTransaction.type === "deposit") {
+          state.balance -= lastTransaction.amount; // Subtract the deposit amount from the balance
+        } else if (lastTransaction.type.startsWith("transfer")) {
+          state.balance += lastTransaction.amount; // Add the transfer amount back to the balance
         }
       }
     },
